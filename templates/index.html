@@ -2,131 +2,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0b1020">
-    <title>VulnGraph | Code Security</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VulnGraph — Security Intelligence</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </head>
 <body>
-    <main class="container">
-        <header class="hero">
-            <div class="eyebrow"><span class="status-dot"></span> LOCAL AI SECURITY WORKSPACE</div>
-            <h1>Understand your code.<br><span>Secure what matters.</span></h1>
-            <p class="subtitle">
-                Detect suspicious Python patterns, understand the risk, and get
-                practical remediation guidance with a locally running AI model.
-            </p>
-            <div class="chips">
-                <span>Python Static Analysis</span>
-                <span>Qwen3:4B · Local AI</span>
-                <span>Privacy-conscious workflow</span>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/">
+        <span class="brand-mark">V</span>
+        <span>VulnGraph<small>SECURITY INTELLIGENCE</small></span>
+      </a>
+
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="navigation">
+        <button class="nav-item active" data-view="overview">
+          <span>◫</span> Overview
+        </button>
+        <button class="nav-item" data-view="findings">
+          <span>⌕</span> Security findings
+          <span id="sidebar-count" class="nav-count">0</span>
+        </button>
+        <button class="nav-item" data-view="report">
+          <span>▤</span> AI security report
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="status-dot"></div>
+        <div><strong>Local AI engine</strong><small>Ollama · Qwen3:4B</small></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">APPLICATION SECURITY / PYTHON</div>
+          <h1 id="page-title">Repository overview</h1>
+        </div>
+        <div class="engine-pill"><span class="status-dot"></span> AI engine configured locally</div>
+      </header>
+
+      <section id="overview-view" class="view">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">CODE SECURITY, SIMPLIFIED</span>
+            <h2>Understand your code.<br><span>Secure what matters.</span></h2>
+            <p>Scan a public GitHub repository for potential Python security issues and get an AI-assisted review.</p>
+          </div>
+          <div class="hero-decoration" aria-hidden="true">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="shield">⌑</div>
+          </div>
+        </div>
+
+        <section class="panel scan-panel">
+          <div class="section-heading">
+            <div><span class="section-index">01</span><h3>Repository scanner</h3></div>
+            <span class="small-muted">PUBLIC REPOSITORIES</span>
+          </div>
+          <form id="repo-form">
+            <label for="repo-url">GitHub repository URL</label>
+            <div class="url-row">
+              <span class="github-icon">GH</span>
+              <input id="repo-url" type="url" required
+                placeholder="https://github.com/owner/repository">
+              <button id="scan-button" type="submit">Analyze repository <span>↗</span></button>
             </div>
-        </header>
-
-        <section class="workspace">
-            <article class="panel editor-panel">
-                <div class="panel-heading">
-                    <div>
-                        <span class="section-label">01 / INPUT</span>
-                        <h2>Source code</h2>
-                    </div>
-                    <span class="file-tag">PYTHON</span>
-                </div>
-
-                <p class="muted">Paste a Python snippet or load the demo to begin.</p>
-
-                <div class="editor-shell">
-                    <div class="editor-topbar">
-                        <div class="window-dots"><i></i><i></i><i></i></div>
-                        <span>security_sample.py</span>
-                        <span class="editor-language">Python</span>
-                    </div>
-                    <textarea id="code" spellcheck="false"
-                        aria-label="Python source code"
-                        placeholder="# Paste Python code here..."></textarea>
-                </div>
-
-                <div class="actions">
-                    <button id="demoBtn" class="button secondary" type="button">Load demo</button>
-                    <button id="clearBtn" class="button secondary" type="button">Clear</button>
-                    <button id="analyzeBtn" class="button primary" type="button">
-                        <span>Analyze code</span><span aria-hidden="true"> ↗</span>
-                    </button>
-                </div>
-                <p id="scanStatus" class="status-message" role="status"></p>
-            </article>
-
-            <article class="panel findings-panel">
-                <div class="panel-heading">
-                    <div>
-                        <span class="section-label">02 / DETECTION</span>
-                        <h2>Security findings</h2>
-                    </div>
-                    <span class="live-tag"><span class="status-dot"></span> SCANNER</span>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-card">
-                        <span>Total findings</span>
-                        <strong id="total">0</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>High severity</span>
-                        <strong id="highCount" class="danger-text">0</strong>
-                    </div>
-                    <div class="stat-card">
-                        <span>Other</span>
-                        <strong id="otherCount">0</strong>
-                    </div>
-                </div>
-
-                <div class="findings-heading">
-                    <h3>Detected patterns</h3>
-                    <span class="muted small">With line-level evidence</span>
-                </div>
-                <div id="findings" aria-live="polite">
-                    <div class="empty-state">
-                        <div class="empty-icon">⌕</div>
-                        <h3>Ready to inspect</h3>
-                        <p>Your findings will appear here after analysis.</p>
-                    </div>
-                </div>
-            </article>
+          </form>
+          <div class="scan-footnote">
+            <span>◈</span> Python files only · Up to 30 files · Repository code is never executed
+          </div>
+          <p id="status" class="status-message" role="status" aria-live="polite"></p>
+          <p id="error" class="error-message" role="alert"></p>
         </section>
 
-        <section class="panel ai-panel">
-            <div class="panel-heading">
-                <div>
-                    <span class="section-label">03 / EXPLANATION</span>
-                    <h2>AI security review</h2>
-                </div>
-                <span class="model-tag"><span class="ai-symbol">✳</span> QWEN3:4B</span>
-            </div>
+        <div class="section-heading metrics-heading">
+          <div><span class="section-index">02</span><h3>Scan overview</h3></div>
+          <span id="repo-label" class="small-muted">AWAITING REPOSITORY</span>
+        </div>
+        <div class="metrics-grid">
+          <article class="metric-card">
+            <span class="metric-label">FILES SCANNED</span>
+            <strong id="files-count">—</strong>
+            <span class="metric-caption">Python source files</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">POTENTIAL FINDINGS</span>
+            <strong id="findings-count">—</strong>
+            <span class="metric-caption">Patterns requiring review</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">HIGH SEVERITY</span>
+            <strong id="high-count" class="high-number">—</strong>
+            <span class="metric-caption">Prioritize manual review</span>
+          </article>
+        </div>
 
-            <p class="muted ai-description">
-                Understand why a pattern matters, consider false positives, and
-                review safer alternatives generated by your local AI model.
-            </p>
-
-            <div id="aiStatus" class="status-message" role="status">
-                Waiting for a code analysis.
-            </div>
-            <div id="aiResult" class="ai-result"></div>
-
-            <div class="disclaimer">
-                <strong>Important:</strong> VulnGraph is an early-stage security
-                aid, not a complete audit. Findings may be false positives, and
-                the absence of findings does not prove code is safe.
-            </div>
+        <section class="panel recent-panel">
+          <div class="section-heading">
+            <div><span class="section-index">03</span><h3>Findings preview</h3></div>
+            <button class="text-button" data-view="findings">View all findings ↗</button>
+          </div>
+          <div id="preview-list" class="empty-state">
+            <div class="empty-icon">⌕</div>
+            <strong>Your scan results will appear here</strong>
+            <p>Enter a public GitHub repository above to begin.</p>
+          </div>
         </section>
+        <p id="notice" class="disclaimer">VulnGraph provides an initial static scan, not a complete security audit.</p>
+      </section>
 
-        <footer>
-            <span>VULNGRAPH</span>
-            <span>Open-source · Rule-based scanning + local AI</span>
-        </footer>
+      <section id="findings-view" class="view hidden">
+        <section class="panel">
+          <div class="section-heading">
+            <div><span class="section-index">01</span><h3>Security findings</h3></div>
+            <span id="finding-total" class="small-muted">0 RESULTS</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>SEVERITY</th><th>FINDING</th><th>FILE / LINE</th><th>CONFIDENCE</th></tr>
+              </thead>
+              <tbody id="findings-table">
+                <tr><td colspan="4" class="table-empty">Run a repository scan to view findings.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="finding-detail" class="detail-panel hidden"></div>
+        </section>
+      </section>
+
+      <section id="report-view" class="view hidden">
+        <section class="panel report-panel">
+          <div class="section-heading">
+            <div><span class="section-index">01</span><h3>AI security review</h3></div>
+            <span class="ai-badge">QWEN3:4B</span>
+          </div>
+          <pre id="ai-report" class="report-content">Scan a repository to generate a security review.</pre>
+        </section>
+        <p class="disclaimer">AI-generated recommendations can be incomplete or incorrect. Verify findings against the source code.</p>
+      </section>
     </main>
-
-    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  </div>
 </body>
 </html>
